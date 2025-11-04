@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Aggregator - Get solutions from multiple AI services including ChatGPT, DeepSeek, Perplexity, and Microsoft Copilot">
+    <title>AI Aggregator - Multi-AI Solution Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AI Aggregator</h1>
+                    <span class="tagline">Multiple AI Services, One Solution</span>
+                </div>
+                <nav class="nav">
+                    <button class="nav-link" id="historyBtn">History</button>
+                    <button class="nav-link" id="settingsBtn">Settings</button>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Query Section -->
+            <section class="query-section">
+                <div class="query-header">
+                    <h2>Ask Anything, Get AI-Powered Solutions</h2>
+                    <p>Get comprehensive answers from ChatGPT, DeepSeek, Perplexity, and Microsoft Copilot</p>
+                </div>
+
+                <div class="query-form">
+                    <div class="textarea-wrapper">
+                        <textarea
+                            id="queryInput"
+                            placeholder="Enter your question or describe what you need help with...&#10;&#10;Examples:&#10;• Create a responsive web application with HTML, CSS, and JavaScript&#10;• Debug this Python code that's giving me an error&#10;• Analyze this dataset and create visualizations&#10;• What are the latest trends in AI technology?"
+                            maxlength="5000"
+                            rows="6"
+                        ></textarea>
+                        <div class="textarea-footer">
+                            <span class="char-count" id="charCount">0 / 5000</span>
+                            <div class="quick-actions">
+                                <button class="quick-action" data-template="web-dev">Web Development</button>
+                                <button class="quick-action" data-template="debugging">Debug Code</button>
+                                <button class="quick-action" data-template="analysis">Data Analysis</button>
+                                <button class="quick-action" data-template="research">Research</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="query-actions">
+                        <button class="btn btn-primary" id="analyzeBtn" disabled>
+                            <span class="btn-text">Analyze Query</span>
+                            <span class="btn-loader" style="display: none;">Analyzing...</span>
+                        </button>
+                        <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Service Selection Modal -->
+            <div class="modal" id="serviceModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>AI Service Selection</h3>
+                        <button class="modal-close" id="closeModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="query-analysis" id="queryAnalysis">
+                            <div class="analysis-loading">
+                                <div class="spinner"></div>
+                                <p>Analyzing your query...</p>
+                            </div>
+                        </div>
+
+                        <div class="service-selection" id="serviceSelection" style="display: none;">
+                            <div class="service-recommendations">
+                                <h4>Recommended Services</h4>
+                                <div class="service-list" id="recommendedServices">
+                                    <!-- Services will be populated here -->
+                                </div>
+                            </div>
+
+                            <div class="alternative-services">
+                                <h4>Additional Services</h4>
+                                <div class="service-list" id="alternativeServices">
+                                    <!-- Services will be populated here -->
+                                </div>
+                            </div>
+
+                            <div class="advanced-options">
+                                <details>
+                                    <summary>Advanced Options</summary>
+                                    <div class="options-grid">
+                                        <div class="option-group">
+                                            <label for="temperature">Creativity Level</label>
+                                            <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                                            <span id="tempValue">0.7</span>
+                                        </div>
+                                        <div class="option-group">
+                                            <label for="maxTokens">Response Length</label>
+                                            <select id="maxTokens">
+                                                <option value="1000">Short (1000 tokens)</option>
+                                                <option value="2000" selected>Medium (2000 tokens)</option>
+                                                <option value="4000">Long (4000 tokens)</option>
+                                            </select>
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" id="includeCode" checked>
+                                                Include code generation
+                                            </label>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button class="btn btn-primary" id="submitQueryBtn">
+                                    <span class="btn-text">Submit Query</span>
+                                    <span class="btn-loader" style="display: none;">Submitting...</span>
+                                </button>
+                                <button class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <h3>Processing Your Query</h3>
+                <div class="progress-container">
+                    <div class="overall-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="overallProgress"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">Starting...</span>
+                    </div>
+
+                    <div class="service-progress" id="serviceProgress">
+                        <!-- Individual service progress will be shown here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h3>AI Responses</h3>
+                    <div class="results-actions">
+                        <button class="btn btn-outline" id="exportBtn">Export</button>
+                        <button class="btn btn-outline" id="newQueryBtn">New Query</button>
+                    </div>
+                </div>
+
+                <!-- Response Tabs -->
+                <div class="response-tabs">
+                    <button class="tab-btn active" data-tab="aggregated">Aggregated Solution</button>
+                    <button class="tab-btn" data-tab="individual">Individual Responses</button>
+                    <button class="tab-btn" data-tab="code">Generated Code</button>
+                    <button class="tab-btn" data-tab="guide">Implementation Guide</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Aggregated Solution Tab -->
+                    <div class="tab-pane active" id="aggregated-tab">
+                        <div class="aggregated-content" id="aggregatedContent">
+                            <!-- Aggregated solution will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Individual Responses Tab -->
+                    <div class="tab-pane" id="individual-tab">
+                        <div class="individual-responses" id="individualResponses">
+                            <!-- Individual AI responses will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Generated Code Tab -->
+                    <div class="tab-pane" id="code-tab">
+                        <div class="generated-code" id="generatedCode">
+                            <!-- Generated code files will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Implementation Guide Tab -->
+                    <div class="tab-pane" id="guide-tab">
+                        <div class="implementation-guide" id="implementationGuide">
+                            <!-- Implementation guide will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section class="history-section" id="historySection" style="display: none;">
+                <div class="history-header">
+                    <h3>Query History</h3>
+                    <div class="history-actions">
+                        <input type="search" id="historySearch" placeholder="Search history...">
+                        <button class="btn btn-outline" id="clearHistoryBtn">Clear All</button>
+                    </div>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- Query history will be displayed here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>&copy; 2024 AI Aggregator. Powered by multiple AI services.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" id="aboutLink">About</a>
+                    <a href="#" id="privacyLink">Privacy</a>
+                    <a href="#" id="termsLink">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/utils.js"></script>
+</body>
+</html>
